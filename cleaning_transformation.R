@@ -1,3 +1,11 @@
+## Peer code review
+## transportation cost analysis - data cleaning script
+## Author: Juliana Guerrero
+## Date: 02/21/2024
+
+## Purpose: Clean and prepare data set for analysis on transportation cost
+
+
 ## data cleaning
 
 ## load data sets
@@ -39,6 +47,19 @@ wta_b_tru = read.csv(file.path(dropbox,
 ################################################################################
 ## cleaning and transformations
 ################################################################################
+
+#### remove atypical values for analysis
+
+# remove high prices in baseline survey
+bsl_tr_trips = bsl_tr_trips %>% 
+  filter(last_trip_price<1000000)
+
+## filter end when qty is missing
+# filter when qutity is larger than 10 tons
+end_tr_trips = end_tr_trips %>% 
+  filter(last_trip_quant!=0) %>% 
+  filter(last_trip_quant<10000)
+
 
 ### add truck size/type
 
@@ -83,6 +104,7 @@ wta_b = wta_b %>%
 
 
 ##  standardized price by capacity, quantity per ton
+
 #baseline
 bsl_tr_trips = bsl_tr_trips %>% 
   mutate(price_ton=ifelse(is.na(last_trip_quant),
@@ -143,11 +165,12 @@ wta_b = wta_b %>%
 
 ## truck type as order factor
 
-# filter truck types 5 and 6 in baseline, these are not included in wta or endline
+# filter truck types 5 and 6 in baseline, 
+# these are not included in wta or endline
 bsl_tr_trips = bsl_tr_trips %>% 
   filter(truck_type %in% c(1,2,3,4))
 
-# as factor
+# transform the truck type as factor
 bsl_tr_trips$truck_type = as.factor(bsl_tr_trips$truck_type)
 
 wta_b$truck_type = as.factor(wta_b$truck_type)
